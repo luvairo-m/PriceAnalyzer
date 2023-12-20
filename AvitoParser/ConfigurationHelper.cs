@@ -11,7 +11,7 @@ public static class ConfigurationHelper
     static ConfigurationHelper()
     {
         random = new Random();
-        
+
         DefaultHeaders = new Dictionary<string, string>
         {
             { "Accept", "application/json" },
@@ -29,7 +29,7 @@ public static class ConfigurationHelper
     private static string[] LoadUserAgents()
     {
         const char separator = '\n';
-        
+
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream($"{nameof(AvitoParser)}.Resources.agents.txt");
 

@@ -6,7 +6,7 @@ namespace AvitoParser;
 public class Parser : IParser<Advertisement>
 {
     private const string baseAddress = "https://www.avito.ru";
-    
+
     private const string cardClass = ".iva-item-root-_lk9K";
     private const string cardDataContainerClass = ".iva-item-body-KLUuy";
     private const string cardTitleClass = ".iva-item-titleStep-pdebR";
@@ -28,13 +28,19 @@ public class Parser : IParser<Advertisement>
         var root = document.DocumentNode;
 
         var adverts = new List<Advertisement>(amount);
-        
+
         while (amount > 0)
         {
             var cardNodes = GetCardsNodes(root);
-            
+
             foreach (var cardNode in cardNodes)
             {
+                var cardPrice = GetCardPrice(root);
+                var cardLocation = GetCardLocation(root);
+
+                var (cardTitle, cardUrl) = GetCardSummary(root);
+                var (cardRegion, cardCity) = ParserHelper.GetLocationSummary(cardLocation);
+
                 // process card
 
                 amount--;
@@ -44,7 +50,7 @@ public class Parser : IParser<Advertisement>
 
                 return adverts;
             }
-            
+
             // cardNodes = FindNextPage(...)
         }
 
@@ -56,7 +62,7 @@ public class Parser : IParser<Advertisement>
         var container = cardNode
             .CssSelect($"{cardDataContainerClass} {cardTitleClass} a")
             .FirstOrDefault();
-        
+
         var title = container.GetAttributeValue("title");
         var url = baseAddress + container.GetAttributeValue("href");
 
