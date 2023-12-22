@@ -141,7 +141,6 @@ public static class Helper
     private static int CalculateLevenshteinDistance(string s, string t)
     {
         var bounds = new { Height = s.Length + 1, Width = t.Length + 1 };
-
         var matrix = new int[bounds.Height, bounds.Width];
 
         for (var height = 0; height < bounds.Height; height++)
@@ -154,7 +153,6 @@ public static class Helper
         for (var width = 1; width < bounds.Width; width++)
         {
             var cost = s[height - 1] == t[width - 1] ? 0 : 1;
-
             matrix[height, width] = Math.Min(
                 Math.Min(matrix[height - 1, width] + 1, matrix[height, width - 1] + 1),
                 matrix[height - 1, width - 1] + cost);
