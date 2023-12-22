@@ -5,10 +5,13 @@ namespace AvitoParser;
 public class Parser
 {
     private readonly HttpClient httpClient;
+    private readonly Random random;
 
-    public Parser(IHttpClientFactory clientFactory)
+    public Parser(HttpClient client)
     {
-        httpClient = clientFactory.CreateClient();
+        httpClient = client;
+        random = new Random();
+
         ClientConfigurator.ConfigureClient(httpClient);
     }
 
@@ -19,11 +22,12 @@ public class Parser
         var document = await GetHtmlDocument(url);
         var root = document.DocumentNode;
 
-        var pagesRemaining = Helper.GetLastPageNumber(root);
+        var currentPageNumber = Helper.GetCurrentPageNumber(url);
+        var pagesAmount = Helper.GetLastPageNumber(root);
 
         while (cardAmount > 0)
         {
-            if (pagesRemaining == 0)
+            if (currentPageNumber > pagesAmount)
                 return adverts;
 
             foreach (var cardNode in Helper.GetCardsNodes(root))
@@ -46,7 +50,9 @@ public class Parser
             }
 
             url = Helper.GetNextPageUrl(url);
-            pagesRemaining -= 1;
+            currentPageNumber += 1;
+
+            await Task.Delay(random.Next(2500, 7000));
 
             document = await GetHtmlDocument(url);
             root = document.DocumentNode;
@@ -59,7 +65,7 @@ public class Parser
     {
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-
+        
         var document = new HtmlDocument();
         document.LoadHtml(await response.Content.ReadAsStringAsync());
 

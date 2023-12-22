@@ -7,8 +7,8 @@ namespace AvitoParser;
 
 public static class Helper
 {
-    private static readonly string[] months;
     private static readonly Dictionary<string, string> replacements;
+    private static readonly string[] months;
     private static readonly string[] cities;
 
     static Helper()
@@ -42,11 +42,18 @@ public static class Helper
     public static int GetLastPageNumber(HtmlNode root)
     {
         var rawNumber = root
-            .CssSelect($"li[class='{LastPageButtonClass}'] span")
+            .CssSelect(LastPageButtonClass)
             .First()
             .InnerText;
 
         return int.Parse(rawNumber);
+    }
+
+    public static int GetCurrentPageNumber(string url)
+    {
+        var regex = new Regex(@"p=(\d+)", RegexOptions.Compiled);
+        var match = regex.Match(url);
+        return match.Success ? int.Parse(match.Groups[1].Value) : 1;
     }
 
     public static string GetNextPageUrl(string currentUrl)
@@ -76,9 +83,7 @@ public static class Helper
         {
             var day = int.Parse(parts[0]);
             var month = Array.IndexOf(months, parts[1]) + 1;
-            var year = int.Parse(parts[2]);
-
-            return new DateTime(year, month, day);
+            return new DateTime(DateTime.Now.Year, month, day);
         }
 
         static DateTime HardParsingStrategy(IReadOnlyList<string> parts)

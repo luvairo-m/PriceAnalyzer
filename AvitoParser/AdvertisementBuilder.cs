@@ -1,5 +1,6 @@
 using HtmlAgilityPack;
 using ScrapySharp.Extensions;
+using System.Web;
 using static AvitoParser.Configuration;
 
 namespace AvitoParser;
@@ -33,7 +34,7 @@ public class AdvertisementBuilder
             .CssSelect($"{CardDataContainerClass} {CardTitleClass} a")
             .First();
 
-        var title = container.GetAttributeValue("title")!;
+        var title = HttpUtility.HtmlDecode(container.GetAttributeValue("title")!);
         advertisement.Title = title;
 
         return this;
