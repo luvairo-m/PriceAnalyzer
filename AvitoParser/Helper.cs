@@ -1,12 +1,17 @@
+using HtmlAgilityPack;
+using ScrapySharp.Extensions;
+using System.Text.RegularExpressions;
+using static AvitoParser.Configuration;
+
 namespace AvitoParser;
 
-public static class BuilderHelper
+public static class Helper
 {
     private static readonly string[] months;
     private static readonly Dictionary<string, string> replacements;
     private static readonly string[] cities;
 
-    static BuilderHelper()
+    static Helper()
     {
         replacements = new Dictionary<string, string>
         {
@@ -34,12 +39,32 @@ public static class BuilderHelper
         cities = ResourceLoader.LoadCities();
     }
 
-    public static string TransliterateBack(string rawCity)
+    public static int GetLastPageNumber(HtmlNode root)
     {
-        rawCity = replacements.Keys.Aggregate(rawCity,
-            (current, key) => current.Replace(key, replacements[key]));
+        var rawNumber = root
+            .CssSelect($"li[class='{LastPageButtonClass}'] span")
+            .First()
+            .InnerText;
 
-        return GetAppropriateCity(rawCity);
+        return int.Parse(rawNumber);
+    }
+
+    public static string GetNextPageUrl(string currentUrl)
+    {
+        var regex = new Regex(@"p=(\d+)", RegexOptions.Compiled);
+        var match = regex.Match(currentUrl);
+
+        if (match.Success)
+            currentUrl = regex.Replace(currentUrl, $"p={int.Parse(match.Groups[1].Value) + 1}");
+        else
+            currentUrl = currentUrl + "&p=" + 2;
+
+        return currentUrl;
+    }
+
+    public static IEnumerable<HtmlNode> GetCardsNodes(HtmlNode root)
+    {
+        return root.CssSelect(CardClass);
     }
 
     public static DateTime CombineDateTimeFrom(string dateString)
@@ -73,6 +98,20 @@ public static class BuilderHelper
         }
     }
 
+    public static string GetCityFromUrl(string url)
+    {
+        var urlParts = url.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        return urlParts[2] == "all" ? "Все регионы" : TransliterateBack(urlParts[2]);
+    }
+
+    private static string TransliterateBack(string rawCity)
+    {
+        rawCity = replacements.Keys.Aggregate(rawCity,
+            (current, key) => current.Replace(key, replacements[key]));
+
+        return GetAppropriateCity(rawCity);
+    }
+
     private static string GetAppropriateCity(string input)
     {
         var (bestCity, bestDistance) = (string.Empty, int.MaxValue);
@@ -80,6 +119,9 @@ public static class BuilderHelper
         foreach (var city in cities)
         {
             var distance = CalculateLevenshteinDistance(input, city);
+
+            if (distance == 0)
+                return city;
 
             if (distance >= bestDistance)
                 continue;

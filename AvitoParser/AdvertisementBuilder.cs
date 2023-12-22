@@ -58,12 +58,13 @@ public class AdvertisementBuilder
             .First()
             .InnerText;
 
-        advertisement.PublicationDate = BuilderHelper.CombineDateTimeFrom(dateString);
+        advertisement.PublicationDate = Helper.CombineDateTimeFrom(dateString);
         return this;
     }
 
     public AdvertisementBuilder SetLocation()
     {
+        advertisement.City = Helper.GetCityFromUrl(advertisement.Url);
         return this;
     }
 

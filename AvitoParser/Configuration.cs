@@ -8,5 +8,5 @@ public static class Configuration
     public const string CardTitleClass = ".iva-item-titleStep-pdebR";
     public const string CardPriceClass = ".iva-item-priceStep-uq2CQ";
     public const string CardDateClass = ".iva-item-dateInfoStep-_acjp";
-    public const string CardLocationClass = ".style-item-address__string-wt61A";
+    public const string LastPageButtonClass = ".styles-module-listItem_last-GI";
 }

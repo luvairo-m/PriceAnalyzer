@@ -1,10 +1,8 @@
 using HtmlAgilityPack;
-using ScrapySharp.Extensions;
-using static AvitoParser.Configuration;
 
 namespace AvitoParser;
 
-public class Parser 
+public class Parser
 {
     private readonly HttpClient httpClient;
 
@@ -17,37 +15,44 @@ public class Parser
     public async Task<IList<Advertisement>> GetAdvertisements(string url, int cardAmount)
     {
         var adverts = new List<Advertisement>(cardAmount);
-        
+
+        var document = await GetHtmlDocument(url);
+        var root = document.DocumentNode;
+
+        var pagesRemaining = Helper.GetLastPageNumber(root);
+
         while (cardAmount > 0)
         {
-            var document = await GetHtmlDocument(url);
-            var root = document.DocumentNode;
-            
-            foreach (var cardNode in GetCardsNodes(root))
+            if (pagesRemaining == 0)
+                return adverts;
+
+            foreach (var cardNode in Helper.GetCardsNodes(root))
             {
+                if (cardAmount == 0)
+                    return adverts;
+
                 var advert = new AdvertisementBuilder(cardNode)
                     .SetTitle()
                     .SetPrice()
-                    .SetLocation()
                     .SetUrl()
+                    .SetLocation()
                     .SetPublicationDate()
                     .Build();
 
                 adverts.Add(advert);
-
-                if (cardAmount-- < 0)
-                    return adverts;
-
                 ClientConfigurator.SetRandomUserAgent(httpClient);
+
+                cardAmount -= 1;
             }
+
+            url = Helper.GetNextPageUrl(url);
+            pagesRemaining -= 1;
+
+            document = await GetHtmlDocument(url);
+            root = document.DocumentNode;
         }
 
         return adverts;
-    }
-
-    private static IEnumerable<HtmlNode> GetCardsNodes(HtmlNode root)
-    {
-        return root.CssSelect(CardClass);
     }
 
     private async Task<HtmlDocument> GetHtmlDocument(string url)
