@@ -14,6 +14,7 @@ public class HomeController : ControllerBase
     {
         var parser = new Parser(factory.CreateClient());
         var adverts = await parser.GetAdvertisements(request.Url, request.Amount!.Value);
+
         return new JsonResult(adverts);
     }
 }

@@ -1,17 +1,11 @@
-using HtmlAgilityPack;
-using ScrapySharp.Extensions;
-using System.Text.RegularExpressions;
-using static AvitoParser.Configuration;
+namespace AvitoParser.Helpers;
 
-namespace AvitoParser;
-
-public static class Helper
+public static class LocationHelper
 {
     private static readonly Dictionary<string, string> replacements;
-    private static readonly string[] months;
     private static readonly string[] cities;
 
-    static Helper()
+    static LocationHelper()
     {
         replacements = new Dictionary<string, string>
         {
@@ -28,79 +22,7 @@ public static class Helper
             { "'", "ъ" }, { "y", "ы" }, { "_", " " }
         };
 
-        months = new[]
-        {
-            "января", "февраля", "марта",
-            "апреля", "мая", "июня",
-            "июля", "августа", "сентября",
-            "октября", "ноября", "декабря"
-        };
-
-        cities = ResourceLoader.LoadCities();
-    }
-
-    public static int GetLastPageNumber(HtmlNode root)
-    {
-        var rawNumber = root
-            .CssSelect(LastPageButtonClass)
-            .First()
-            .InnerText;
-
-        return int.Parse(rawNumber);
-    }
-
-    public static int GetCurrentPageNumber(string url)
-    {
-        var regex = new Regex(@"p=(\d+)", RegexOptions.Compiled);
-        var match = regex.Match(url);
-        return match.Success ? int.Parse(match.Groups[1].Value) : 1;
-    }
-
-    public static string GetNextPageUrl(string currentUrl)
-    {
-        var regex = new Regex(@"p=(\d+)", RegexOptions.Compiled);
-        var match = regex.Match(currentUrl);
-
-        if (match.Success)
-            currentUrl = regex.Replace(currentUrl, $"p={int.Parse(match.Groups[1].Value) + 1}");
-        else
-            currentUrl = currentUrl + "&p=" + 2;
-
-        return currentUrl;
-    }
-
-    public static IEnumerable<HtmlNode> GetCardsNodes(HtmlNode root)
-    {
-        return root.CssSelect(CardClass);
-    }
-
-    public static DateTime CombineDateTimeFrom(string dateString)
-    {
-        var dateParts = dateString.Split(' ');
-        return dateParts[^1] == "назад" ? HardParsingStrategy(dateParts) : SimpleParsingStrategy(dateParts);
-
-        static DateTime SimpleParsingStrategy(IReadOnlyList<string> parts)
-        {
-            var day = int.Parse(parts[0]);
-            var month = Array.IndexOf(months, parts[1]) + 1;
-            return new DateTime(DateTime.Now.Year, month, day);
-        }
-
-        static DateTime HardParsingStrategy(IReadOnlyList<string> parts)
-        {
-            var timeDelta = -int.Parse(parts[0]);
-
-            var dateTime = parts[1][0] switch
-            {
-                'м' => DateTime.Now.AddMinutes(timeDelta),
-                'ч' => DateTime.Now.AddHours(timeDelta),
-                'д' => DateTime.Now.AddDays(timeDelta),
-                'н' => DateTime.Now.AddDays(timeDelta * 7),
-                _ => throw new Exception("Unknown format")
-            };
-
-            return dateTime;
-        }
+        cities = ResourceLoader.LoadResourcesByName("cities.txt");
     }
 
     public static string GetCityFromUrl(string url)

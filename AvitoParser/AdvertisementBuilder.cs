@@ -1,3 +1,4 @@
+using AvitoParser.Helpers;
 using HtmlAgilityPack;
 using ScrapySharp.Extensions;
 using System.Web;
@@ -59,13 +60,13 @@ public class AdvertisementBuilder
             .First()
             .InnerText;
 
-        advertisement.PublicationDate = Helper.CombineDateTimeFrom(dateString);
+        advertisement.PublicationDate = DateTimeHelper.CombineDateTimeFrom(dateString);
         return this;
     }
 
     public AdvertisementBuilder SetLocation()
     {
-        advertisement.City = Helper.GetCityFromUrl(advertisement.Url);
+        advertisement.City = LocationHelper.GetCityFromUrl(advertisement.Url);
         return this;
     }
 

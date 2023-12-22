@@ -22,15 +22,15 @@ public class Parser
         var document = await GetHtmlDocument(url);
         var root = document.DocumentNode;
 
-        var currentPageNumber = Helper.GetCurrentPageNumber(url);
-        var pagesAmount = Helper.GetLastPageNumber(root);
+        var currentPageNumber = ParserHelper.GetCurrentPageNumber(url);
+        var pagesAmount = ParserHelper.GetLastPageNumber(root);
 
         while (cardAmount > 0)
         {
             if (currentPageNumber > pagesAmount)
                 return adverts;
 
-            foreach (var cardNode in Helper.GetCardsNodes(root))
+            foreach (var cardNode in ParserHelper.GetCardsNodes(root))
             {
                 if (cardAmount == 0)
                     return adverts;
@@ -49,7 +49,7 @@ public class Parser
                 cardAmount -= 1;
             }
 
-            url = Helper.GetNextPageUrl(url);
+            url = ParserHelper.GetNextPageUrl(url);
             currentPageNumber += 1;
 
             await Task.Delay(random.Next(2500, 7000));

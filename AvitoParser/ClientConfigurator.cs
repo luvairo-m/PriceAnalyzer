@@ -1,9 +1,9 @@
+using static AvitoParser.Configuration;
+
 namespace AvitoParser;
 
 public static class ClientConfigurator
 {
-    private const string baseAddress = "https://www.avito.ru";
-
     private static readonly Dictionary<string, string> defaultHeaders;
     private static readonly string[] userAgents;
     private static readonly Random random;
@@ -23,7 +23,7 @@ public static class ClientConfigurator
             { "User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0" }
         };
 
-        userAgents = ResourceLoader.LoadUserAgents();
+        userAgents = ResourceLoader.LoadResourcesByName("agents.txt");
     }
 
     public static void ConfigureClient(HttpClient client)
@@ -31,7 +31,7 @@ public static class ClientConfigurator
         foreach (var (header, value) in defaultHeaders)
             client.DefaultRequestHeaders.Add(header, value);
 
-        client.BaseAddress = new Uri(baseAddress);
+        client.BaseAddress = new Uri(BaseAddress);
     }
 
     public static void SetRandomUserAgent(HttpClient client)
