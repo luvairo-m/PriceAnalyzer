@@ -4,15 +4,17 @@ namespace AvitoParser;
 
 public class Parser
 {
+    private static readonly Random random;
     private readonly HttpClient httpClient;
-    private readonly Random random;
+
+    static Parser()
+    {
+        random = new Random();
+    }
 
     public Parser(HttpClient client)
     {
         httpClient = client;
-        random = new Random();
-
-        ClientConfigurator.ConfigureClient(httpClient);
     }
 
     public async Task<IList<Advertisement>> GetAdvertisements(string url, int cardAmount)
@@ -52,7 +54,8 @@ public class Parser
             url = ParserHelper.GetNextPageUrl(url);
             currentPageNumber += 1;
 
-            await Task.Delay(random.Next(2500, 7000));
+            // This line will be changed in future.
+            await Task.Delay(random.Next(2500, 7500));
 
             document = await GetHtmlDocument(url);
             root = document.DocumentNode;
@@ -65,7 +68,7 @@ public class Parser
     {
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        
+
         var document = new HtmlDocument();
         document.LoadHtml(await response.Content.ReadAsStringAsync());
 

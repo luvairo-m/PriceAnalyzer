@@ -1,6 +1,10 @@
+using PriceAnalyzer;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient();
+// Typed httpClient registration:
+builder.Services.AddHttpClient<ParsingClient>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();

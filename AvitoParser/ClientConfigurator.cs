@@ -28,6 +28,8 @@ public static class ClientConfigurator
 
     public static void ConfigureClient(HttpClient client)
     {
+        client.DefaultRequestHeaders.Clear();
+
         foreach (var (header, value) in defaultHeaders)
             client.DefaultRequestHeaders.Add(header, value);
 
