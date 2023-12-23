@@ -25,12 +25,12 @@ public class Parser
         var root = document.DocumentNode;
 
         var currentPageNumber = ParserHelper.GetCurrentPageNumber(url);
-        var pagesAmount = ParserHelper.GetLastPageNumber(root);
+        var lastPageNumber = ParserHelper.GetLastPageNumber(root);
 
         while (cardAmount > 0)
         {
-            if (currentPageNumber > pagesAmount)
-                return adverts;
+            if (currentPageNumber > lastPageNumber)
+                break;
 
             foreach (var cardNode in ParserHelper.GetCardsNodes(root))
             {

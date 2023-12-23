@@ -7,6 +7,8 @@ namespace AvitoParser;
 
 public static class ParserHelper
 {
+    private static readonly Regex pageRegex = new(@"p=(\d+)", RegexOptions.Compiled);
+
     public static int GetLastPageNumber(HtmlNode root)
     {
         var rawNumber = root
@@ -19,18 +21,16 @@ public static class ParserHelper
 
     public static int GetCurrentPageNumber(string url)
     {
-        var regex = new Regex(@"p=(\d+)", RegexOptions.Compiled);
-        var match = regex.Match(url);
+        var match = pageRegex.Match(url);
         return match.Success ? int.Parse(match.Groups[1].Value) : 1;
     }
 
     public static string GetNextPageUrl(string currentUrl)
     {
-        var regex = new Regex(@"p=(\d+)", RegexOptions.Compiled);
-        var match = regex.Match(currentUrl);
+        var match = pageRegex.Match(currentUrl);
 
         if (match.Success)
-            currentUrl = regex.Replace(currentUrl, $"p={int.Parse(match.Groups[1].Value) + 1}");
+            currentUrl = pageRegex.Replace(currentUrl, $"p={int.Parse(match.Groups[1].Value) + 1}");
         else
             currentUrl = currentUrl + "&p=" + 2;
 
