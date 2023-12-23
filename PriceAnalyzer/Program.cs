@@ -1,4 +1,5 @@
 using PriceAnalyzer;
+using PriceAnalyzer.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 
 if (app.Environment.IsDevelopment())

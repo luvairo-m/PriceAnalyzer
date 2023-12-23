@@ -66,7 +66,7 @@ public class Parser
 
     private async Task<HtmlDocument> GetHtmlDocument(string url)
     {
-        var response = await httpClient.GetAsync(url);
+        using var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
 
         var document = new HtmlDocument();
