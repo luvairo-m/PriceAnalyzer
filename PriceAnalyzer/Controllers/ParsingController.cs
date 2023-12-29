@@ -15,10 +15,11 @@ public class ParsingController : ControllerBase
         [FromServices] ParsingClient client)
     {
         var parser = new Parser(client.Client);
-
         var adverts = await parser.GetAdvertisements(request.Url, request.Amount!.Value);
-        var averagePrice = adverts.FillPriceDeviation();
+        var medianPrice = adverts.GetMedianPrice();
 
-        return new JsonResult(new ParseResponse(averagePrice, adverts));
+        adverts.FillPriceDeviation(medianPrice);
+
+        return new JsonResult(new ParseResponse(medianPrice, adverts));
     }
 }

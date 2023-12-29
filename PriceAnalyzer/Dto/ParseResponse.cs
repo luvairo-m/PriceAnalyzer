@@ -2,4 +2,4 @@ using AvitoParser;
 
 namespace PriceAnalyzer.Dto;
 
-public record ParseResponse(double AveragePrice, IList<Advertisement> Advertisements);
+public record ParseResponse(double MedianPrice, IList<Advertisement> Advertisements);

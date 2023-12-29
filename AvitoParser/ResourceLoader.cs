@@ -7,7 +7,7 @@ public static class ResourceLoader
     public static string[] LoadResourcesByName(string resourceName)
     {
         var separators = new[] { '\n', '\r' };
-        
+
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream($"{nameof(AvitoParser)}.Resources.{resourceName}");
 

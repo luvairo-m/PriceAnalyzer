@@ -17,7 +17,7 @@ public class Parser
         httpClient = client;
     }
 
-    public async Task<IList<Advertisement>> GetAdvertisements(string url, int cardAmount)
+    public async Task<List<Advertisement>> GetAdvertisements(string url, int cardAmount)
     {
         var adverts = new List<Advertisement>(cardAmount);
 
@@ -50,7 +50,7 @@ public class Parser
             }
 
             ClientConfigurator.SetRandomUserAgent(httpClient);
-            
+
             url = ParserHelper.GetNextPageUrl(url);
             currentPageNumber += 1;
 
