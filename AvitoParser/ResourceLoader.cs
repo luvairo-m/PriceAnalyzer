@@ -6,13 +6,13 @@ public static class ResourceLoader
 {
     public static string[] LoadResourcesByName(string resourceName)
     {
-        const char separator = '\n';
-
+        var separators = new[] { '\n', '\r' };
+        
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream($"{nameof(AvitoParser)}.Resources.{resourceName}");
 
         using var reader = new StreamReader(stream!);
-        var resources = reader.ReadToEnd().Split(separator);
+        var resources = reader.ReadToEnd().Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
         return resources;
     }

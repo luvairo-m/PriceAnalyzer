@@ -46,11 +46,11 @@ public class Parser
                     .Build();
 
                 adverts.Add(advert);
-                ClientConfigurator.SetRandomUserAgent(httpClient);
-
                 cardAmount -= 1;
             }
 
+            ClientConfigurator.SetRandomUserAgent(httpClient);
+            
             url = ParserHelper.GetNextPageUrl(url);
             currentPageNumber += 1;
 
