@@ -55,7 +55,7 @@ public class Parser
             currentPageNumber += 1;
 
             // This line will be changed in future.
-            await Task.Delay(random.Next(2500, 7500));
+            await Task.Delay(random.Next(7500, 10_000));
 
             document = await GetHtmlDocument(url);
             root = document.DocumentNode;
