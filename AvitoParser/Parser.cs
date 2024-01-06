@@ -27,38 +27,48 @@ public class Parser
         var currentPageNumber = ParserHelper.GetCurrentPageNumber(url);
         var lastPageNumber = ParserHelper.GetLastPageNumber(root);
 
-        while (cardAmount > 0)
+        try
         {
-            if (currentPageNumber > lastPageNumber)
-                break;
-
-            foreach (var cardNode in ParserHelper.GetCardsNodes(root))
+            while (cardAmount > 0)
             {
-                if (cardAmount == 0)
-                    return adverts;
+                if (currentPageNumber > lastPageNumber)
+                    break;
 
-                var advert = new AdvertisementBuilder(cardNode)
-                    .SetTitle()
-                    .SetPrice()
-                    .SetUrl()
-                    .SetActualLocation()
-                    .SetPublicationDate()
-                    .Build();
+                foreach (var cardNode in ParserHelper.GetCardsNodes(root))
+                {
+                    if (cardAmount == 0)
+                        return adverts;
 
-                adverts.Add(advert);
-                cardAmount -= 1;
+                    var advert = new AdvertisementBuilder(cardNode)
+                        .SetTitle()
+                        .SetPrice()
+                        .SetUrl()
+                        .SetActualLocation()
+                        .SetPublicationDate()
+                        .Build();
+
+                    adverts.Add(advert);
+                    cardAmount -= 1;
+                }
+
+                ClientConfigurator.SetRandomUserAgent(httpClient);
+
+                url = ParserHelper.GetNextPageUrl(url);
+                currentPageNumber += 1;
+
+                // It's better to use proxy instead :)
+                await Task.Delay(random.Next(7500, 10_000));
+
+                document = await DownloadHtmlDocumentAsync(url);
+                root = document.DocumentNode;
             }
+        }
+        catch
+        {
+            if (adverts.Count != 0)
+                return adverts;
 
-            ClientConfigurator.SetRandomUserAgent(httpClient);
-
-            url = ParserHelper.GetNextPageUrl(url);
-            currentPageNumber += 1;
-
-            // It's better to use proxy instead :)
-            await Task.Delay(random.Next(7500, 10_000));
-
-            document = await DownloadHtmlDocumentAsync(url);
-            root = document.DocumentNode;
+            throw;
         }
 
         return adverts;

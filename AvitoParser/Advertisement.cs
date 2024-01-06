@@ -16,5 +16,7 @@ public class Advertisement
 
     [Name("Является выбросом")] public bool IsOutlier { get; set; }
 
-    [Name("Отклонение от медианы, %")] public int PriceDeviation { get; set; }
+    [Name("Отклонение от медианы, %")] public int PriceDeviationFromMedian { get; set; }
+
+    [Name("Отклонение от среднего, %")] public int PriceDeviationFromAverage { get; set; }
 }

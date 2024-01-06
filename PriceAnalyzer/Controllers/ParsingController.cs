@@ -2,7 +2,6 @@ using AvitoParser;
 using Microsoft.AspNetCore.Mvc;
 using PriceAnalyzer.Dto;
 using PriceAnalyzer.Filters;
-using PriceAnalyzer.Logic;
 
 namespace PriceAnalyzer.Controllers;
 
@@ -18,10 +17,6 @@ public class ParsingController : ControllerBase
     {
         var parser = new Parser(client.Client);
         var adverts = await parser.GetAdvertisementsAsync(request.Url, request.Amount!.Value);
-        var medianPrice = adverts.GetMedianPrice();
-
-        adverts.FillPriceDeviation(medianPrice);
-
-        return new JsonResult(new ParseResponse(medianPrice, adverts));
+        return new JsonResult(new ParseResponse { Advertisements = adverts });
     }
 }
