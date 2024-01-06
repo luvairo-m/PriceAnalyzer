@@ -1,6 +1,7 @@
 using AvitoParser.Helpers;
 using HtmlAgilityPack;
 using ScrapySharp.Extensions;
+using System.Text;
 using System.Web;
 using static AvitoParser.Configuration;
 
@@ -64,9 +65,22 @@ public class AdvertisementBuilder
         return this;
     }
 
-    public AdvertisementBuilder SetLocation()
+    public AdvertisementBuilder SetActualLocation()
     {
-        advertisement.City = LocationHelper.GetCityFromUrl(advertisement.Url);
+        var fragments = new List<string>();
+        var locationBuilder = new StringBuilder();
+
+        foreach (var field in root.CssSelect($"{ActualLocationClass} p"))
+        foreach (var innerField in field.CssSelect("span"))
+        {
+            var textData = innerField.InnerText.TrimStart().TrimEnd();
+            fragments.Add(textData);
+
+            if (textData.Contains("·"))
+                fragments.Clear();
+        }
+
+        advertisement.Location = string.Join("; ", fragments);
         return this;
     }
 

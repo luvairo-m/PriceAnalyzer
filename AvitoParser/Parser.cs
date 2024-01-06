@@ -17,11 +17,11 @@ public class Parser
         httpClient = client;
     }
 
-    public async Task<List<Advertisement>> GetAdvertisements(string url, int cardAmount)
+    public async Task<List<Advertisement>> GetAdvertisementsAsync(string url, int cardAmount)
     {
         var adverts = new List<Advertisement>(cardAmount);
 
-        var document = await GetHtmlDocument(url);
+        var document = await DownloadHtmlDocumentAsync(url);
         var root = document.DocumentNode;
 
         var currentPageNumber = ParserHelper.GetCurrentPageNumber(url);
@@ -41,7 +41,7 @@ public class Parser
                     .SetTitle()
                     .SetPrice()
                     .SetUrl()
-                    .SetLocation()
+                    .SetActualLocation()
                     .SetPublicationDate()
                     .Build();
 
@@ -54,17 +54,17 @@ public class Parser
             url = ParserHelper.GetNextPageUrl(url);
             currentPageNumber += 1;
 
-            // This line will be changed in future.
+            // It's better to use proxy instead :)
             await Task.Delay(random.Next(7500, 10_000));
 
-            document = await GetHtmlDocument(url);
+            document = await DownloadHtmlDocumentAsync(url);
             root = document.DocumentNode;
         }
 
         return adverts;
     }
 
-    private async Task<HtmlDocument> GetHtmlDocument(string url)
+    private async Task<HtmlDocument> DownloadHtmlDocumentAsync(string url)
     {
         using var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();

@@ -9,4 +9,5 @@ public static class Configuration
     public const string CardPriceClass = ".iva-item-priceStep-uq2CQ";
     public const string CardDateClass = ".iva-item-dateInfoStep-_acjp";
     public const string LastPageButtonClass = ".styles-module-listItem-_La42.styles-module-listItem_last-GI_us";
+    public const string ActualLocationClass = ".geo-root-zPwRk";
 }

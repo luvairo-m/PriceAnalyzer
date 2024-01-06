@@ -24,7 +24,6 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\agents.txt"/>
         <None Remove="Resources\cities.txt"/>
-        <EmbeddedResource Include="Resources\cities.txt"/>
     </ItemGroup>
 
 </Project>

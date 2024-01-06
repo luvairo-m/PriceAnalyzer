@@ -2,7 +2,7 @@ using AvitoParser;
 
 namespace PriceAnalyzer.Logic;
 
-public static class AdvertisementListExtensions
+public static class AdvertListExtensions
 {
     public static double GetMedianPrice(this List<Advertisement> adverts)
     {
