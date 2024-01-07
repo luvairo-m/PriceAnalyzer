@@ -10,6 +10,7 @@ public class ParsingController : ControllerBase
 {
     [HttpGet("/parse")]
     [ProducesResponseType(typeof(ParseResponse), 200)]
+    [ParseActionFilter]
     [ParseResultFilter]
     public async Task<IActionResult> Parse(
         [FromQuery] ParseRequest request,

@@ -25,7 +25,7 @@ public class ExceptionMiddleware
         }
     }
 
-    private ExceptionResponse GetErrorResponseObject(Exception exception)
+    private static ExceptionResponse GetErrorResponseObject(Exception exception)
     {
         string message;
         int statusCode;
@@ -33,12 +33,16 @@ public class ExceptionMiddleware
         switch (exception)
         {
             case InvalidOperationException:
-                message = "Некорректная ссылка";
+                message = "Bad url";
                 statusCode = 404;
                 break;
             case HttpRequestException:
-                message = "Сайт недоступен или превышено число запросов";
+                message = "Avito not available or too many requests";
                 statusCode = 403;
+                break;
+            case ArgumentException:
+                message = "Incorrect host";
+                statusCode = 404;
                 break;
             default:
                 message = exception.Message;

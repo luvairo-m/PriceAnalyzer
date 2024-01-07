@@ -3,20 +3,16 @@ using PriceAnalyzer.Dto;
 
 namespace PriceAnalyzer.Fillers;
 
-public class MedianDeviationFiller : IParseResponseFiller
+public class MedianDeviationFiller : IResponseFiller
 {
     public void FillResponse(ParseResponse response)
     {
         var adverts = response.Advertisements;
-
         var medianPrice = GetMedianPrice(adverts);
-        response.MedianPrice = Math.Round(medianPrice, 3);
 
-        foreach (var advert in adverts)
-        {
-            var deviation = (advert.Price - medianPrice) / medianPrice * 100;
-            advert.PriceDeviationFromMedian = (int)Math.Round(deviation);
-        }
+        response.MedianPrice = medianPrice;
+        adverts.ForEach(advert =>
+            advert.DeviationFromMedian = FillerHelper.GetDeviationPercent(advert.Price, medianPrice));
     }
 
     private static double GetMedianPrice(IEnumerable<Advertisement> adverts)

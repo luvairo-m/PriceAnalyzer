@@ -4,14 +4,14 @@ namespace PriceAnalyzer.Fillers;
 
 public static class FillerAggregator
 {
-    private static readonly List<IParseResponseFiller> fillers = new();
+    private static readonly List<IResponseFiller> fillers = new();
 
     static FillerAggregator()
     {
         fillers.Add(new MedianDeviationFiller());
-        fillers.Add(new AverageDeviationFiller());
         fillers.Add(new ExpectedValueAndStdDeviationFiller());
         fillers.Add(new OutlierFiller());
+        fillers.Add(new ModeFiller());
     }
 
     public static void ApplyFillers(ParseResponse instance)

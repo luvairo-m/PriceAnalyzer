@@ -2,7 +2,7 @@ using PriceAnalyzer.Dto;
 
 namespace PriceAnalyzer.Fillers;
 
-public class OutlierFiller : IParseResponseFiller
+public class OutlierFiller : IResponseFiller
 {
     public void FillResponse(ParseResponse response)
     {
@@ -14,10 +14,7 @@ public class OutlierFiller : IParseResponseFiller
         prices.Sort();
 
         var (lower, upper) = GetBounds(prices);
-
-        foreach (var advert in adverts)
-            if (advert.Price < lower || advert.Price > upper)
-                advert.IsOutlier = true;
+        adverts.ForEach(advert => advert.IsOutlier = advert.Price < lower || advert.Price > upper);
     }
 
     private static (double lowerBound, double upperBound) GetBounds(List<int> prices)
