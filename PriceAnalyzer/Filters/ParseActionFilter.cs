@@ -11,7 +11,7 @@ public class ParseActionFilter : Attribute, IAsyncActionFilter
         var request = context.ActionArguments["request"]! as ParseRequest;
 
         if (new Uri(request!.Url).Host != Configuration.Host)
-            throw new ArgumentException("Incorrect hostname");
+            throw new InvalidOperationException("Incorrect url");
 
         await next();
     }

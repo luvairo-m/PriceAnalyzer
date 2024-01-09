@@ -20,35 +20,22 @@ public class ExceptionMiddleware
         catch (Exception exception)
         {
             context.Response.ContentType = "application/json";
-            var exceptionResponse = GetErrorResponseObject(exception);
+            var exceptionResponse = GetExceptionResponse(exception);
             await context.Response.WriteAsJsonAsync(exceptionResponse);
         }
     }
 
-    private static ExceptionResponse GetErrorResponseObject(Exception exception)
+    private static ExceptionResponse GetExceptionResponse(Exception exception)
     {
-        string message;
-        int statusCode;
+        var statusCode = StatusCodes.Status500InternalServerError;
+        var message = exception.Message;
 
-        switch (exception)
+        statusCode = exception switch
         {
-            case InvalidOperationException:
-                message = "Bad url";
-                statusCode = 404;
-                break;
-            case HttpRequestException:
-                message = "Avito not available or too many requests";
-                statusCode = 403;
-                break;
-            case ArgumentException:
-                message = "Incorrect host";
-                statusCode = 404;
-                break;
-            default:
-                message = exception.Message;
-                statusCode = 500;
-                break;
-        }
+            InvalidOperationException => StatusCodes.Status404NotFound,
+            HttpRequestException requestException => (int)requestException.StatusCode!,
+            _ => statusCode
+        };
 
         return new ExceptionResponse(message, statusCode);
     }
