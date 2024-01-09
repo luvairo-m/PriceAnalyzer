@@ -29,10 +29,11 @@ public static class ParserHelper
     {
         var match = pageRegex.Match(currentUrl);
 
-        if (match.Success)
-            currentUrl = pageRegex.Replace(currentUrl, $"p={int.Parse(match.Groups[1].Value) + 1}");
-        else
-            currentUrl = currentUrl + "&p=" + 2;
+        currentUrl = match.Success switch
+        {
+            true => pageRegex.Replace(currentUrl, $"p={int.Parse(match.Groups[1].Value) + 1}"),
+            _ => currentUrl + "&p=" + 2
+        };
 
         return currentUrl;
     }
